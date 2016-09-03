@@ -1,0 +1,9 @@
+.settings/
+.metadata/
+.buildpath
+.project
+
+doc/
+vendor/
+nbproject/
+composer.lock

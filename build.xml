@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="subtitling" default="build" basedir=".">
+    
+    <property file="./build.properties" />
+    <fileset id="project.files" dir="${project.source_path}">
+        <include name="**/*" />
+        <include name="*" />
+    </fileset>
+
+    <!-- Main build target -->
+    <target 
+        name="build"
+        depends="
+            clean,
+            prepare,
+            code-sniff,
+            copy-paste-detect,
+            mess-detect,
+            documentation,
+            metrics,
+            measure
+        "
+    />
+    
+    <!-- Remove directories that will be generated -->
+    <target name="clean">
+        <delete dir="${project.documentation_path}" failonerror="false" includeemptydirs="true" />
+    </target>
+    
+    <!-- Create necessary directories -->
+    <target name="prepare">
+        <mkdir dir="${project.documentation_path}" />
+        <mkdir dir="${doc.documentation_path}" />
+        <mkdir dir="${metrics.reports_path}" />
+    </target>
+    
+    <!-- Bootstrap all necessary components installed as Composer dependencies -->
+    <target name="init-autoloader">
+        <autoloader autoloaderpath="${project.autoloader_path}" />
+    </target>
+    
+    <!-- Code style checking using squizlabs/php_codesniffer -->
+    <target name="code-sniff" depends="init-autoloader">
+        <phpcodesniffer
+            standard="${codesniffer.standard}"
+            showSniffs="false"
+            showWarnings="true"
+            encoding="${codesniffer.encoding}"
+            tabWidth="${codesniffer.tabs}"
+            haltonerror = "${codesniffer.halt_on_error}"
+            haltonwarning = "${codesniffer.halt_on_warning}"
+        >
+            <fileset refid="project.files" />
+            <!-- This formatter is a special hack for preventing PHP errors in phing ext codesniffer task -->
+            <formatter type="${codesniffer.format}" usefile="true" outfile="php://stdout" />
+        </phpcodesniffer>
+    </target>
+    
+    <!-- Copy-paste detection using sebastian/phpcpd -->
+    <target name="copy-paste-detect" depends="init-autoloader">
+        <phpcpd>
+            <fileset refid="project.files" />
+        </phpcpd>
+    </target>
+    
+    <!-- Mess detection using phpmd/phpmd -->
+    <target name="mess-detect" depends="init-autoloader">
+        <phpmd
+            rulesets="${md.rulesets}"
+            minimumPriority="${md.rules_minimum_priority}"
+            format="${md.format}"
+        >
+            <fileset refid="project.files" />
+        </phpmd>
+    </target>
+    
+    <!-- Generate documentation using phpdocumentor/phpdocumentor  -->
+    <target name="documentation" depends="clean, prepare, init-autoloader">
+        <phpdoc2
+            title="${project.name}"
+            destdir="${doc.documentation_path}"
+            template="${doc.template}"
+            defaultPackageName="${doc.default_package}"
+        >
+            <fileset refid="project.files" />
+        </phpdoc2>
+    </target>
+    
+    <!-- Generate metrics using pdepend/pdepend -->
+    <target name="metrics" depends="clean, prepare, init-autoloader">
+        <phpdepend haltonerror="${metrics.halt_on_error}">
+            <fileset refid="project.files" />
+            <logger type="summary-xml" outfile="${metrics.report_summary_file}" />
+            <logger type="jdepend-chart" outfile="${metrics.report_jdepend_file}" />
+            <logger type="overview-pyramid" outfile="${metrics.report_overview_file}" />
+        </phpdepend>
+    </target>
+    
+    <!-- Measure project using phploc/phploc -->
+    <target name="measure" depends="init-autoloader">
+        <phploc countTests="${loc.count_tests}" >
+            <fileset refid="project.files" />
+            <formatter type="${loc.format}" usefile="false" />
+        </phploc>
+    </target>
+    
+    <!-- Run unit tests using phpunit/phpunit -->
+
+</project>
