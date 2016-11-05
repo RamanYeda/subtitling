@@ -25,7 +25,9 @@ class WebVttParser extends AbstractParserSubject implements Parser
     
     public function parse(InputSource $source)
     {
-        $this->webVttState->parseSignature($source);
+        $this->setWebVttState($this->webVttState->parseSignature($source));   
+        $this->setWebVttState($this->webVttState->parseLineTerminator($source));
+        
         // Uncomplete.
         
         $this->initParser();
@@ -34,5 +36,10 @@ class WebVttParser extends AbstractParserSubject implements Parser
     private function initParser()
     {
         $this->webVttState = new StartEnd();
+    }
+    
+    private function setWebVttState(WebVttParserState $webVttState)
+    {
+        $this->webVttState = $webVttState;
     }
 }

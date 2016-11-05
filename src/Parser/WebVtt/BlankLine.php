@@ -12,17 +12,14 @@ namespace Yeda\Subtitling\Parser\WebVtt;
 use Yeda\Subtitling\Source\Input\InputSource;
 use Yeda\Subtitling\Parser\Exception\ParserException;
 
-class StartEnd extends AbstractWebVttParserState
+class BlankLine extends AbstractWebVttParserState
 {
-    public function parseSignature(InputSource $source)
+    /** This marker equited to WebVTT elements delimiter. */
+    const EMPTY_MARKER = '';
+    
+    public function parseRegion(InputSource $source)
     {
-        $signature = $source->readNextLine();
-        
-        if (substr($signature, 0, 6) === Signature::SIGNATURE_LABEL) {
-            self::$parsedStateValue = $signature;
-//            var_dump($signature);
-            return new Signature();
-        }
+        // To be implemented...
         
         throw new ParserException();
     }

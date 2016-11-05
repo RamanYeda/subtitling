@@ -10,7 +10,7 @@
 namespace Yeda\Subtitling\Parser\WebVtt;
 
 use Yeda\Subtitling\Source\Input\InputSource;
-use PDepend\Source\Parser\ParserException;
+use Yeda\Subtitling\Parser\Exception\ParserException;
 
 class Signature extends AbstractWebVttParserState
 {
@@ -18,7 +18,29 @@ class Signature extends AbstractWebVttParserState
     
     public function parseLineTerminator(InputSource $source)
     {
-        // To be implemented.
+        if ($source->hasNextLine()) {
+            $line = $source->readNextLine();
+//            var_dump($line);
+            
+            if ($line === namespace\BlankLine::EMPTY_MARKER) {
+                self::$parsedStateValue = namespace\BlankLine::EMPTY_MARKER;
+                
+                while ($source->hasNextLine()) {
+                    $lineKey = $source->getLineKey();
+                    $source->setLineKey($lineKey + 1);
+                    
+                    $line = $source->readLine();
+//                    var_dump($line);
+                    
+                    if ($line !== namespace\BlankLine::EMPTY_MARKER) {
+                        $source->setLineKey($lineKey);
+                        break;
+                    }
+                }
+                
+                return new namespace\BlankLine();
+            }
+        }
         
         throw new ParserException();
     }
