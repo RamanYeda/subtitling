@@ -9,18 +9,10 @@
 
 namespace Yeda\Subtitling\Parser\WebVtt;
 
-use Yeda\Subtitling\Source\Input\InputSource;
-use Yeda\Subtitling\Parser\Exception\ParserException;
-
 class BlankLine extends AbstractWebVttParserState
 {
-    /** This marker equited to WebVTT elements delimiter. */
-    const EMPTY_MARKER = '';
+    use StateTrait\Region;
     
-    public function parseRegion(InputSource $source)
-    {
-        // To be implemented...
-        
-        throw new ParserException();
-    }
+    /** This marker equited to WebVTT elements delimiter. */
+    const EMPTY_MARKER = '';    
 }

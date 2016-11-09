@@ -10,6 +10,7 @@
 namespace Yeda\Subtitling\Parser\WebVtt;
 
 use Yeda\Subtitling\Parser\Parser;
+use Yeda\Subtitling\Parser\Exception\ParserException;
 use Yeda\Subtitling\Parser\AbstractParserSubject;
 use Yeda\Subtitling\Source\Input\InputSource;
 
@@ -27,6 +28,11 @@ class WebVttParser extends AbstractParserSubject implements Parser
     {
         $this->setWebVttState($this->webVttState->parseSignature($source));   
         $this->setWebVttState($this->webVttState->parseLineTerminator($source));
+        
+        while ($source->hasNextLine()) { 
+            $this->setWebVttState($this->webVttState->parseRegion($source));
+            $this->setWebVttState($this->webVttState->parseLineTerminator($source));
+        }
         
         // Uncomplete.
         
