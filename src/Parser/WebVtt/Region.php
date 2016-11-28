@@ -10,6 +10,7 @@
 namespace Yeda\Subtitling\Parser\WebVtt;
 
 use Yeda\Subtitling\Source\Input\InputSource;
+use Yeda\Subtitling\Parser\Exception\ParserException;
 
 class Region extends AbstractWebVttParserState
 {
@@ -58,6 +59,6 @@ class Region extends AbstractWebVttParserState
                 $this->parseLineTerminatorStandard($source);
         }
         
-        throw new PrserException();
+        throw new ParserException();
     }
 }

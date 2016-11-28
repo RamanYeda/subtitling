@@ -28,20 +28,12 @@ trait Region
             strncmp($line, $stringRegionLabel, $stringRegionLabelLength) === 0;
         
         if ($line === RegionState::REGION_LABEL) {
-            
-            // parse region in block form.
+            var_dump($line);
+            $region = $this->parseRegionBlock($source);
             
         } else if ($isStringForm) {
-            $line = trim(substr($line, $stringRegionLabelLength));
             var_dump($line);
-            
-            $regionToken = strtok($line, ' ');
-            
-            while ($regionToken) {
-                list($key, $value) = explode('=', $regionToken, 2);
-                $region[$key] = $value;
-                $regionToken = strtok(' ');
-            }
+            $region = $this->parseRegionString($line);
         }
         
         if (empty(array_diff(RegionState::REGION_KEYS, array_keys($region)))) {
@@ -49,5 +41,34 @@ trait Region
         }
         
         throw new ParserException();
+    }
+    
+    private function parseRegionBlock(InputSource $source)
+    {
+        $region = [];
+        for ($i = 0; $i < count(RegionState::REGION_KEYS); $i++) {
+            $regionToken = $source->readNextLine();
+            var_dump($regionToken);
+            list($key, $value) = explode(':', $regionToken, 2);
+            $region[$key] = trim($value);
+        }
+        
+        return $region;            
+    }
+    
+    private function parseRegionString($regionString)
+    {
+        $line = trim(substr($regionString, RegionState::REGION_LABEL_LENGTH + 1));
+        $region = [];
+
+        $regionToken = strtok($line, ' ');
+        
+        while ($regionToken) {
+            list($key, $value) = explode('=', $regionToken, 2);
+            $region[$key] = $value;
+            $regionToken = strtok(' ');
+        }
+        
+        return $region;
     }
 }
