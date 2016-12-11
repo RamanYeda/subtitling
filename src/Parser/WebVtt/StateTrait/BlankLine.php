@@ -18,7 +18,6 @@ trait BlankLine
     public function parseLineTerminator(InputSource $source)
     {
         $line = $source->readNextLine();
-        var_dump($line);
 
         if ($line === BlankLineState::EMPTY_MARKER) {
             self::$parsedStateValue = BlankLineState::EMPTY_MARKER;

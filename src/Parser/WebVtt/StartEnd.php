@@ -20,7 +20,6 @@ class StartEnd extends AbstractWebVttParserState
         
         if (substr($signature, 0, 6) === Signature::SIGNATURE_LABEL) {
             self::$parsedStateValue = $signature;
-            var_dump($signature);
             return new Signature();
         }
         
