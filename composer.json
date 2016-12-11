@@ -34,6 +34,6 @@
         "exclude-from-classmap": [ "/tests/" ]
     },
     "autoload-dev": {
-        "psr-4": { "Yeda\\Tests\\": "tests/" }
+        "psr-4": { "Yeda\\Subtitling\\Tests\\": "tests/" }
     }
 }
